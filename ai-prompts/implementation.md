@@ -125,12 +125,12 @@ Implement controllers, services, DTOs, and wire up EF Core. No frontend yet.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Implemented 7 REST endpoints (`UsersController`, `TicketsController`), request/response DTOs, FluentValidation validators (incl. `status` rejection via `JsonExtensionData`), 3 EF Core repositories, `UserService`/`TicketService`/`CommentService`, `ServiceResult<T>`, `ExceptionHandlingMiddleware`, flat `{ "error" }` validation responses, CORS for Vite (`localhost:5173`), Swagger UI + OpenAPI 3 at `/swagger`, port aligned to 5000 |
+| **Accepted** | Pending review |
+| **Changed** | Swagger/OpenAPI added per user request (was Stretch in original contract); used `Swashbuckle.AspNetCore` 10.x with target-typed `OpenApiInfo`; integration tests deferred to testing phase |
+| **Rejected** | — |
+| **Why** | Controller+service+repository pattern per design-notes; `TicketService.ChangeStatusAsync` delegates to existing `StatusTransitionService`; manual DTO mapping (no AutoMapper) |
 
 ---
 
