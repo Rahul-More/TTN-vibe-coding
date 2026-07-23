@@ -36,6 +36,35 @@ export interface CreateTicketRequest {
   createdBy: number;
 }
 
+export interface Comment {
+  id: number;
+  message: string;
+  createdBy: number;
+  createdByName: string;
+  createdAt: string;
+}
+
+export interface TicketDetail extends TicketListItem {
+  validNextStatuses: TicketStatus[];
+  comments: Comment[];
+}
+
+export interface UpdateTicketRequest {
+  title: string;
+  description?: string | null;
+  priority: TicketPriority;
+  assignedTo?: number | null;
+}
+
+export interface ChangeStatusRequest {
+  status: TicketStatus;
+}
+
+export interface CreateCommentRequest {
+  message: string;
+  createdBy: number;
+}
+
 export interface ApiErrorBody {
   error: string;
   code?: string;

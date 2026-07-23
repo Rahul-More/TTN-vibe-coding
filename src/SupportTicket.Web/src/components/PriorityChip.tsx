@@ -24,20 +24,29 @@ const priorityStyles: Record<
 
 interface PriorityChipProps {
   priority: TicketPriority;
+  /** Outline style for unselected priority options — keeps text fully readable */
+  variant?: 'filled' | 'outline';
 }
 
-export function PriorityChip({ priority }: PriorityChipProps) {
+export function PriorityChip({ priority, variant = 'filled' }: PriorityChipProps) {
   const style = priorityStyles[priority];
+  const isOutline = variant === 'outline';
+
   return (
     <Chip
       label={priority}
       size="small"
       sx={{
-        bgcolor: style.bgcolor,
+        bgcolor: isOutline ? '#ffffff' : style.bgcolor,
         color: style.color,
-        border: '1px solid',
+        border: '1.5px solid',
         borderColor: style.borderColor,
-        fontWeight: 600,
+        fontWeight: 700,
+        fontSize: '0.8125rem',
+        letterSpacing: '0.01em',
+        '& .MuiChip-label': {
+          px: 1.25,
+        },
       }}
     />
   );

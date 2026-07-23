@@ -2,12 +2,19 @@ import type { ApiErrorBody } from '../types/api';
 
 export class ApiRequestError extends Error {
   readonly code?: string;
+  readonly status?: number;
   readonly isNetworkError: boolean;
 
-  constructor(message: string, code?: string, isNetworkError = false) {
+  constructor(
+    message: string,
+    code?: string,
+    isNetworkError = false,
+    status?: number,
+  ) {
     super(message);
     this.name = 'ApiRequestError';
     this.code = code;
+    this.status = status;
     this.isNetworkError = isNetworkError;
   }
 }
@@ -56,6 +63,8 @@ export async function request<T>(
     throw new ApiRequestError(
       errorBody.error ?? 'An unexpected error occurred',
       errorBody.code,
+      false,
+      response.status,
     );
   }
 

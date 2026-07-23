@@ -204,9 +204,9 @@ Wire to the existing backend API.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Extended `types/api.ts` and `ticketsApi.ts` with `TicketDetail`, `Comment`, and four detail endpoints (`getTicket`, `updateTicket`, `changeTicketStatus`, `addComment`). Added `status` to `ApiRequestError` for 404 detection. Built `TicketDetailPage` with overview metadata, PUT edit form (dirty tracking), API-driven status dropdown via `validNextStatuses` with warning `Alert` on transition errors, comment thread + add form, and dedicated 404/invalid-ID states. Replaced `TicketDetailPlaceholder` in routing. |
+| **Accepted** | Pending review |
+| **Changed** | Status transition errors use `Alert severity="warning"` (not `ErrorBanner`); comments appended locally after POST (no refetch); `FormSection` duplicated inline (not extracted from create page) |
+| **Rejected** | — |
+| **Why** | Warning alert distinguishes transition failures from validation errors; local comment append avoids full-page reload; inline `FormSection` keeps diff minimal |
