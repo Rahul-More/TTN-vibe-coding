@@ -46,13 +46,13 @@ Place tests in tests/ folder. Ensure dotnet test runs successfully.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
-| **Test run result** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Added WebApplicationFactory integration tests for 5 valid + 5 invalid status transitions against PostgreSQL `ticketdb_test`. Includes factory, helpers, and `[Theory]` tests under `tests/SupportTicket.Api.Tests/Integration/`. |
+| **Accepted** | CustomWebApplicationFactory with dedicated Postgres test DB; StatusTransitionIntegrationTests covering all 10 required transitions; PATCH assertions for 200/`TicketDetailResponse` and 400/`INVALID_TRANSITION`; GET persistence checks. |
+| **Changed** | Seeded tickets via EF DbContext instead of POST (async FluentValidation auto-validation crashes POST); reset Tickets identity sequence after seed; used `[Collection]` to disable parallel integration tests. |
+| **Rejected** | EF InMemory (strategy prefers real Postgres); Testcontainers (no Docker compose in repo). |
+| **Why** | Matches `test-strategy.md` AC for state-machine HTTP proof; POST seed blocked by existing FluentValidation async-rule issue in API. |
+| **Test run result** | `dotnet test` — 65 passed, 0 failed (55 unit + 10 integration). |
 
 ---
 
