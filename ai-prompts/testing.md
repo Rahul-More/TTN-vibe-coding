@@ -84,13 +84,13 @@ Update test-results.md with a summary table after running.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
-| **Test run result** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Replaced sync FluentValidation auto-validation with `FluentValidationAsyncActionFilter` so async `MustAsync` rules work on POST; added 5 validation/404 integration tests and HTTP helpers in `ValidationErrorIntegrationTests`. |
+| **Accepted** | Async action filter for FluentValidation; `ValidationErrorIntegrationTests` for empty title, invalid createdBy, GET 404, comment 404, empty message; extended `TicketApiHelpers` with POST/GET raw helpers. |
+| **Changed** | Removed `AddFluentValidationAutoValidation()` from `Program.cs`; added `Filters/FluentValidationAsyncActionFilter.cs`; updated `test-results.md` with all 70 passing tests. |
+| **Rejected** | EF InMemory (strategy prefers Postgres); new NuGet packages (filter uses existing FluentValidation DI). |
+| **Why** | POST endpoints require async validator support for user-existence checks; matches `test-strategy.md` §5.1/§5.2 and `api-contract.md` error envelopes. |
+| **Test run result** | `dotnet test` — 70 passed, 0 failed (55 unit + 15 integration). |
 
 ---
 

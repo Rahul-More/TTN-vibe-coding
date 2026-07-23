@@ -4,45 +4,46 @@
 
 | Field | Value |
 |-------|-------|
-| Date | _[YYYY-MM-DD]_ |
-| Command | `dotnet test` |
-| Environment | _[e.g. local, Test DB: SQLite in-memory]_ |
-| Total tests | _[N]_ |
-| Passed | _[N]_ |
-| Failed | _[N]_ |
+| Date | 2026-07-23 |
+| Command | `dotnet test tests/SupportTicket.Api.Tests/SupportTicket.Api.Tests.csproj` |
+| Environment | local, Test DB: PostgreSQL `ticketdb_test` |
+| Total tests | 70 |
+| Passed | 70 |
+| Failed | 0 |
 
 ## State Machine Integration Tests
 
 | Test | Result | Notes |
 |------|--------|-------|
-| Open → InProgress (valid) | _[PASS/FAIL]_ | |
-| InProgress → Resolved (valid) | _[PASS/FAIL]_ | |
-| Resolved → Closed (valid) | _[PASS/FAIL]_ | |
-| Open → Cancelled (valid) | _[PASS/FAIL]_ | |
-| InProgress → Cancelled (valid) | _[PASS/FAIL]_ | |
-| Open → Closed (invalid) | _[PASS/FAIL]_ | |
-| Open → Resolved (invalid) | _[PASS/FAIL]_ | |
-| Closed → Open (invalid) | _[PASS/FAIL]_ | |
-| Cancelled → InProgress (invalid) | _[PASS/FAIL]_ | |
+| Open → InProgress (valid) | PASS | 200, status persisted |
+| InProgress → Resolved (valid) | PASS | 200, status persisted |
+| Resolved → Closed (valid) | PASS | 200, status persisted |
+| Open → Cancelled (valid) | PASS | 200, status persisted |
+| InProgress → Cancelled (valid) | PASS | 200, status persisted |
+| Open → Closed (invalid) | PASS | 400, INVALID_TRANSITION |
+| Open → Resolved (invalid) | PASS | 400, INVALID_TRANSITION |
+| Closed → Open (invalid) | PASS | 400, INVALID_TRANSITION |
+| Cancelled → InProgress (invalid) | PASS | 400, INVALID_TRANSITION |
+| Resolved → Open (invalid) | PASS | 400, INVALID_TRANSITION |
 
 ## Other Tests
 
 | Test | Result | Notes |
 |------|--------|-------|
-| Create ticket — missing title | _[PASS/FAIL]_ | |
-| Get ticket — not found | _[PASS/FAIL]_ | |
-| Add comment — ticket not found | _[PASS/FAIL]_ | |
+| Create ticket — empty title | PASS | 400, "Title is required" |
+| Create ticket — invalid createdBy | PASS | 400, "User with id 99999 does not exist" |
+| Get ticket — not found | PASS | 404, "Ticket not found" |
+| Add comment — ticket not found | PASS | 404, "Ticket not found" |
+| Add comment — empty message | PASS | 400, "Message is required" |
 
 ## Sample Output
 
 ```
-_Paste dotnet test output here after running tests_
+Passed!  - Failed:     0, Passed:    70, Skipped:     0, Total:    70, Duration: 3 s - SupportTicket.Api.Tests.dll (net8.0)
 ```
 
 ## Failures and Fixes
 
-_If any test failed, describe the fix and re-run result._
-
 | Failure | Root Cause | Fix | Re-run |
 |---------|------------|-----|--------|
-| _[example]_ | _[example]_ | _[example]_ | _[PASS]_ |
+| — | — | — | — |

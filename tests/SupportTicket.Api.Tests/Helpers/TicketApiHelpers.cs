@@ -49,6 +49,26 @@ public static class TicketApiHelpers
             new { status });
     }
 
+    public static async Task<HttpResponseMessage> PostTicketRawAsync(
+        HttpClient client,
+        object body)
+    {
+        return await client.PostAsJsonAsync("/api/tickets", body);
+    }
+
+    public static async Task<HttpResponseMessage> PostCommentRawAsync(
+        HttpClient client,
+        int ticketId,
+        object body)
+    {
+        return await client.PostAsJsonAsync($"/api/tickets/{ticketId}/comments", body);
+    }
+
+    public static async Task<HttpResponseMessage> GetTicketRawAsync(HttpClient client, int ticketId)
+    {
+        return await client.GetAsync($"/api/tickets/{ticketId}");
+    }
+
     public static async Task<TicketDetailResponse> GetTicketAsync(HttpClient client, int ticketId)
     {
         var response = await client.GetAsync($"/api/tickets/{ticketId}");

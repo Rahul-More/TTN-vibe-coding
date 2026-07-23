@@ -1,11 +1,11 @@
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SupportTicket.Api.Data;
 using SupportTicket.Api.Data.Seed;
 using SupportTicket.Api.DTOs.Requests;
 using SupportTicket.Api.DTOs.Responses;
+using SupportTicket.Api.Filters;
 using SupportTicket.Api.Middleware;
 using SupportTicket.Api.Repositories;
 using SupportTicket.Api.Services;
@@ -13,7 +13,12 @@ using SupportTicket.Api.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers()
+builder.Services.AddScoped<FluentValidationAsyncActionFilter>();
+
+builder.Services.AddControllers(options =>
+    {
+        options.Filters.Add<FluentValidationAsyncActionFilter>();
+    })
     .ConfigureApiBehaviorOptions(options =>
     {
         options.InvalidModelStateResponseFactory = context =>
@@ -27,7 +32,6 @@ builder.Services.AddControllers()
         };
     });
 
-builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateTicketRequestValidator>();
 
 builder.Services.AddEndpointsApiExplorer();
