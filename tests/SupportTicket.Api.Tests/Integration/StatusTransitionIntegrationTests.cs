@@ -25,6 +25,7 @@ public class StatusTransitionIntegrationTests(CustomWebApplicationFactory factor
     public static TheoryData<TicketStatus, TicketStatus> InvalidTransitions =>
         new()
         {
+            { TicketStatus.Open, TicketStatus.Open },
             { TicketStatus.Open, TicketStatus.Closed },
             { TicketStatus.Open, TicketStatus.Resolved },
             { TicketStatus.Closed, TicketStatus.Open },

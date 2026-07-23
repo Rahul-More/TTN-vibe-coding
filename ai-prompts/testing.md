@@ -119,9 +119,10 @@ Do not add Stretch tests unless I explicitly ask.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Mapped all 11 Core ACs to automated tests or manual steps; added 8 Core integration tests (status isolation, invalid priority/status query, search/filter, same-state transition); regenerated `test-results.md` AC coverage table. |
+| **Accepted** | AC coverage mapping; `StatusIsolationIntegrationTests` (3); `SearchFilterIntegrationTests` (2); extended `ValidationErrorIntegrationTests` (+2) and `StatusTransitionIntegrationTests` (+1 same-state); `TicketApiHelpers` PUT/list helpers; AC summary table in `test-results.md`. |
+| **Changed** | `test-results.md` — added Acceptance Criteria Coverage section and new test result tables; total 78 tests (55 unit + 23 integration). |
+| **Rejected** | Stretch tests (E2E, React component, concurrency); max-length/assignedTo integration tests (not required for Core minimum). |
+| **Why** | Closes Core gaps for AC-1/4/6/7/9 status isolation and search/filter; UI-only ACs remain manual per `test-strategy.md` §8. |
+| **Test run result** | `dotnet test` — 78 passed, 0 failed (55 unit + 23 integration). |

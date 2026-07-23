@@ -17,7 +17,19 @@ public static class TicketApiHelpers
 
     public static async Task<int> SeedTicketAtStatusAsync(
         IServiceProvider services,
-        TicketStatus status)
+        TicketStatus status) =>
+        await SeedTicketAsync(
+            services,
+            "Integration test ticket",
+            "Created for status transition tests",
+            status);
+
+    public static async Task<int> SeedTicketAsync(
+        IServiceProvider services,
+        string title,
+        string? description,
+        TicketStatus status,
+        TicketPriority priority = TicketPriority.Medium)
     {
         using var scope = services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -25,9 +37,9 @@ public static class TicketApiHelpers
 
         var ticket = new Ticket
         {
-            Title = "Integration test ticket",
-            Description = "Created for status transition tests",
-            Priority = TicketPriority.Medium,
+            Title = title,
+            Description = description,
+            Priority = priority,
             Status = status,
             CreatedById = 1,
             CreatedAt = now,
@@ -69,6 +81,37 @@ public static class TicketApiHelpers
         return await client.GetAsync($"/api/tickets/{ticketId}");
     }
 
+    public static async Task<HttpResponseMessage> PutTicketRawAsync(
+        HttpClient client,
+        int ticketId,
+        object body)
+    {
+        return await client.PutAsJsonAsync($"/api/tickets/{ticketId}", body);
+    }
+
+    public static async Task<HttpResponseMessage> GetTicketsListRawAsync(
+        HttpClient client,
+        string? search = null,
+        string? status = null)
+    {
+        var query = new List<string>();
+        if (search is not null)
+        {
+            query.Add($"search={Uri.EscapeDataString(search)}");
+        }
+
+        if (status is not null)
+        {
+            query.Add($"status={Uri.EscapeDataString(status)}");
+        }
+
+        var path = query.Count == 0
+            ? "/api/tickets"
+            : $"/api/tickets?{string.Join("&", query)}";
+
+        return await client.GetAsync(path);
+    }
+
     public static async Task<TicketDetailResponse> GetTicketAsync(HttpClient client, int ticketId)
     {
         var response = await client.GetAsync($"/api/tickets/{ticketId}");
@@ -84,5 +127,11 @@ public static class TicketApiHelpers
     public static async Task<TicketDetailResponse> ReadTicketDetailAsync(HttpResponseMessage response)
     {
         return (await response.Content.ReadFromJsonAsync<TicketDetailResponse>(JsonOptions))!;
+    }
+
+    public static async Task<IReadOnlyList<TicketListItemResponse>> ReadTicketListAsync(
+        HttpResponseMessage response)
+    {
+        return (await response.Content.ReadFromJsonAsync<List<TicketListItemResponse>>(JsonOptions))!;
     }
 }

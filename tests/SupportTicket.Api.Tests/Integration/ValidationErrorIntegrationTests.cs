@@ -93,4 +93,34 @@ public class ValidationErrorIntegrationTests(CustomWebApplicationFactory factory
         Assert.Equal("Message is required", error.Error);
         Assert.Null(error.Code);
     }
+
+    [Fact]
+    public async Task PostTicket_InvalidPriority_Returns400()
+    {
+        var response = await TicketApiHelpers.PostTicketRawAsync(_client, new
+        {
+            title = "Valid title",
+            description = "Test description",
+            priority = "Urgent",
+            createdBy = 1
+        });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+        var error = await TicketApiHelpers.ReadErrorAsync(response);
+        Assert.Equal("Invalid priority value: Urgent", error.Error);
+        Assert.Null(error.Code);
+    }
+
+    [Fact]
+    public async Task GetTickets_InvalidStatusQueryParam_Returns400()
+    {
+        var response = await TicketApiHelpers.GetTicketsListRawAsync(_client, status: "Urgent");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+        var error = await TicketApiHelpers.ReadErrorAsync(response);
+        Assert.Equal("Invalid status value: Urgent", error.Error);
+        Assert.Null(error.Code);
+    }
 }
