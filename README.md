@@ -42,7 +42,8 @@ dotnet run
 ### 3. Frontend
 
 ```bash
-cd src/[FrontendProject]
+cd src/SupportTicket.Web
+cp .env.example .env   # VITE_API_URL=http://localhost:5000/api
 npm install
 npm run dev
 ```

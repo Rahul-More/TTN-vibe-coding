@@ -21,7 +21,7 @@ Track implementation progress. Check off as you complete each task.
 - [ ] Prompt 1 — Database schema, migrations, seed data
 - [ ] Prompt 2 — Status state machine service
 - [ ] Prompt 3 — Backend API
-- [ ] Prompt 4 — React frontend — list & create
+- [x] Prompt 4 — React frontend — list & create
 - [ ] Prompt 5 — React frontend — detail, status, comments
 
 ## Phase 4 — Testing (ai-prompts/testing.md)

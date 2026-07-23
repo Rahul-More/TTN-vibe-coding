@@ -166,12 +166,12 @@ Show meaningful loading and error states. Do not implement detail page yet.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Scaffolded `src/SupportTicket.Web` (Vite + React 19 + TypeScript + MUI + react-router-dom). Implemented fetch-based API client (`VITE_API_URL`), types matching `api-contract.md`, Ticket List page (MUI table, 300ms debounced search, status filter, loading/error/empty states), Create Ticket form (user dropdowns, `localStorage` for `createdBy`, API validation errors), detail-route placeholder for row navigation, `.env.example` |
+| **Accepted** | Pending review |
+| **Changed** | MUI instead of plain CSS (user preference); redirect to list on create success (detail page deferred to Prompt 5); `TicketDetailPlaceholder` stub at `/tickets/:id` |
+| **Rejected** | — |
+| **Why** | MUI per user styling choice; list redirect avoids half-built detail flow; placeholder satisfies row-click navigation without Prompt 5 scope |
 
 ---
 
