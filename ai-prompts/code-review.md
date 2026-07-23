@@ -36,11 +36,11 @@ Do not apply fixes yet — I will decide what to accept. I will log results in c
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted fixes** | |
-| **Rejected suggestions** | |
-| **Why rejected** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Backend review against AC + API contract. State machine centralized (`StatusTransitionService`); validation mostly solid; 7 findings logged in `code-review-notes.md`. Highest: committed connection strings in appsettings (AC-10). Also: numeric enum parse gap, 500 PascalCase error body, Swagger beyond Core, minor defensive/mapping notes. No fixes applied. |
+| **Accepted fixes** | None yet — all 7 findings left **Pending** in `code-review-notes.md` for decision. |
+| **Rejected suggestions** | None yet. |
+| **Why rejected** | N/A — awaiting Accept/Reject on each Action row before Prompt 3. |
 
 ---
 
