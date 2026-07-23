@@ -1,12 +1,24 @@
-# Requirement Analysis
+---
+name: Refine Requirements Analysis
+overview: Paste-ready markdown to replace/expand sections in `requirements-analysis.md` — covering Core functional requirements, full state machine matrix, 15+ edge cases, PO assumptions, and pre-coding decisions.
+todos:
+  - id: paste-requirements
+    content: Paste refined sections into requirements-analysis.md (keep header + My Understanding)
+    status: pending
+  - id: resolve-ambiguities
+    content: Add Decisions subsection with chosen answers for all 14 ambiguity items
+    status: pending
+  - id: acceptance-criteria
+    content: Run planning Prompt 2 to generate acceptance-criteria.md from finalized requirements
+    status: pending
+isProject: false
+---
 
-## Selected Project Option
+# Refined Requirement Analysis (paste into requirements-analysis.md)
 
-**Option 1 — Backend-Heavy: Support Ticket Management System**
+Replace or merge the sections below into [requirements-analysis.md](ai-practical-assessment/requirements-analysis.md). Keeps your existing header and "My Understanding" section; updates everything from **Functional Requirements** onward.
 
-## My Understanding (in your own words)
-
-Internal users need a small app to manage support tickets end-to-end: create tickets, view and update them, add comments, search/filter, and move tickets through a **strict status lifecycle**. Users are seeded in the database (no user-management UI in Core). The hardest requirement is the **status state machine** — invalid transitions must be rejected by the backend and surfaced clearly in the UI.
+---
 
 ## Functional Requirements
 
@@ -23,7 +35,7 @@ _(No authentication, no user-management UI, no Stretch features such as paginati
 
 #### Comments
 - [ ] **Add comment** — `message` (required), `createdBy` (required), linked to an existing ticket
-- [ ] **Display comments** — shown on ticket detail view, oldest first (chronological thread)
+- [ ] **Display comments** — shown on ticket detail view (sort order: document decision — see Ambiguities)
 
 #### Users (seeded, read-only)
 - [ ] **Seed users** — 3–5 users in the database with `id`, `name`, `email`, `role`
@@ -97,7 +109,7 @@ _(No authentication, no user-management UI, no Stretch features such as paginati
 
 **Rule:** Any transition not listed in Valid transitions is rejected with `400` and `code: "INVALID_TRANSITION"`.
 
-#### From Open (invalid: 3 of 5 targets)
+#### From Open (invalid: 4 of 5 targets)
 
 | To | Valid? |
 |----|--------|
@@ -149,15 +161,22 @@ _(No authentication, no user-management UI, no Stretch features such as paginati
 
 **Summary:** 5 valid transitions, **20 invalid transitions** (including 5 same-state no-ops).
 
-```
-Open        → InProgress | Cancelled
-InProgress  → Resolved   | Cancelled
-Resolved    → Closed
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> Open
+    Open --> InProgress
+    Open --> Cancelled
+    InProgress --> Resolved
+    InProgress --> Cancelled
+    Resolved --> Closed
+    Closed --> [*]
+    Cancelled --> [*]
 ```
 
 ### Enforcement rules
 - Status changes **only** via `PATCH /api/tickets/{id}/status`
-- Attempting to set `status` on `POST` or `PUT` is rejected with `400` — forces use of PATCH
+- Attempting to set `status` on `POST` or `PUT` is rejected (`400`) or ignored — **decide before coding** (see Ambiguities)
 - UI status dropdown shows **only valid next statuses** for the current state; backend remains the source of truth
 
 ---
@@ -169,8 +188,8 @@ Resolved    → Closed
 | 1 | Invalid status transition (e.g. Open → Closed) | `400` with `INVALID_TRANSITION`; UI shows server message |
 | 2 | Same-state transition (e.g. Open → Open) | `400` with `INVALID_TRANSITION` |
 | 3 | Transition from terminal state (Closed/Cancelled → any) | `400` with `INVALID_TRANSITION` |
-| 4 | Status change via PUT (field update endpoint) | `400` — `status` field rejected; must use PATCH |
-| 5 | Empty or whitespace-only title on create/update | `400` validation error (trim before validate) |
+| 4 | Status change via PUT (field update endpoint) | Reject or strip `status` field — **decide**; must not bypass state machine |
+| 5 | Empty or whitespace-only title on create/update | `400` validation error |
 | 6 | Title/description exceeds max length (200 / 2000) | `400` validation error |
 | 7 | Invalid priority value (e.g. `"Urgent"`) | `400` validation error |
 | 8 | `createdBy` or `assignedTo` references non-existent user | `400` validation error |
@@ -182,14 +201,16 @@ Resolved    → Closed
 | 14 | `createdBy` on comment references non-existent user | `400` validation error |
 | 15 | Keyword search with no matches | `200` with empty array; UI shows "no results" — not an error |
 | 16 | Search + status filter combined with no matches | `200` with empty array |
-| 17 | Filter by invalid status query value | `400` — strict validation |
-| 18 | Concurrent status updates (two clients, same ticket) | Last-write-wins |
-| 19 | Edit fields on Closed/Cancelled ticket | Allowed — only status is locked |
-| 20 | Add comment on Closed/Cancelled ticket | Allowed — post-close notes permitted |
+| 17 | Filter by invalid status query value | `400` or ignore invalid filter — **decide** |
+| 18 | Concurrent status updates (two clients, same ticket) | **Decide:** last-write-wins vs optimistic concurrency (`409`) |
+| 19 | Edit fields on Closed/Cancelled ticket | **Decide** — allow read-only vs allow field edits on terminal tickets |
+| 20 | Add comment on Closed/Cancelled ticket | **Decide** — allow vs reject |
 
 ---
 
 ## Assumptions (for product owner)
+
+Document these explicitly so scope stays clear:
 
 1. **Single-tenant internal tool** — one organization; no multi-tenant isolation in Core
 2. **No authentication in Core** — any user can perform any action; `createdBy` / `assignedTo` are selected from a dropdown (trusted client)
@@ -200,43 +221,50 @@ Resolved    → Closed
 7. **Default status on create is Open** — client cannot set initial status
 8. **Assignee is optional** — tickets may be unassigned (`assignedTo` null)
 9. **Priority is a fixed enum** — Low, Medium, High only
-10. **Search scope** — keyword matches title and description (case-insensitive)
+10. **Search scope** — keyword matches title and description (per API contract); case-insensitivity is acceptable unless PO says otherwise
 11. **Timestamps** — `createdAt` / `updatedAt` stored in UTC; `updatedAt` changes on field updates and status changes
 12. **Real database** — PostgreSQL (or SQLite for local dev); data persists across restarts
 13. **No pagination in Core** — list returns all matching tickets
 14. **Status logic in one service** — `StatusTransitionService` is the single enforcement point
 15. **Separate endpoints for fields vs status** — PUT for fields, PATCH for status
-16. **Concurrent updates** — last-write-wins for Core (no optimistic concurrency)
 
 ---
 
-## Decisions
+## Ambiguities — decide before coding
 
-Resolved ambiguities — locked before implementation:
+Resolve these in a short "Decisions" subsection (or update Assumptions) so implementation and tests stay consistent:
 
-| # | Question | Decision |
-|---|----------|----------|
-| 1 | Can tickets be reopened after Resolved/Closed? | **No** — matches state machine |
-| 2 | Are comments editable/deletable? | **No** — append-only in Core |
-| 3 | Is assignee required on create? | **No** — optional |
-| 4 | Can fields be updated on Closed/Cancelled tickets? | **Yes** — allow edits; only status is locked |
-| 5 | Can comments be added to Closed/Cancelled tickets? | **Yes** — post-close notes are useful |
-| 6 | Comment sort order on detail view? | **Oldest first** (chronological thread) |
-| 7 | What if client sends `status` on POST or PUT? | **Reject with 400** — forces use of PATCH |
-| 8 | Invalid `status` query param on list? | **400** — strict validation |
-| 9 | Search: case-sensitive or insensitive? | **Case-insensitive** |
-| 10 | How does UI pick `createdBy` without auth? | **Dropdown of seeded users**; default first user or remember last selection in localStorage |
-| 11 | Concurrent status updates? | **Last-write-wins** for Core |
-| 12 | PUT: full replace or partial update? | **Full replace of updatable fields** — omitted nullable fields may clear assignee |
-| 13 | Whitespace-only strings — trim before validate? | **Trim; empty after trim = invalid** for required fields |
-| 14 | Is ticket delete needed? | **No** in Core — not in spec |
+| # | Question | Recommended default | Impact |
+|---|----------|---------------------|--------|
+| 1 | Can tickets be reopened after Resolved/Closed? | **No** — matches state machine | Tests, UI status dropdown |
+| 2 | Are comments editable/deletable? | **No** — append-only in Core | API shape, UI |
+| 3 | Is assignee required on create? | **No** — optional | Validation rules |
+| 4 | Can fields be updated on Closed/Cancelled tickets? | **Yes** — allow edits; only status is locked | PUT handler, UI disable logic |
+| 5 | Can comments be added to Closed/Cancelled tickets? | **Yes** — post-close notes are useful | POST comment handler |
+| 6 | Comment sort order on detail view? | **Oldest first** (chronological thread) | UI + API response order |
+| 7 | What if client sends `status` on POST or PUT? | **Reject with 400** — forces use of PATCH | Validation on create/update DTOs |
+| 8 | Invalid `status` query param on list? | **400** — strict validation | GET /tickets handler |
+| 9 | Search: case-sensitive or insensitive? | **Case-insensitive** | DB query / EF filter |
+| 10 | How does UI pick `createdBy` without auth? | **Dropdown of seeded users**; default first user or remember last selection in localStorage | UI only |
+| 11 | Concurrent status updates? | **Last-write-wins** for Core (simplest); document in assumptions | Optional: row version later |
+| 12 | PUT: full replace or partial update? | **Full replace of updatable fields** — omitted nullable fields may clear assignee | DTO design |
+| 13 | Whitespace-only strings — trim before validate? | **Trim; empty after trim = invalid** for required fields | Validation helper |
+| 14 | Is ticket delete needed? | **No** in Core — not in spec | Scope control |
 
 ---
 
 ## Non-Functional Requirements
+
+_(Unchanged from your draft — keep as-is.)_
 
 - Backend validates all required fields; reject invalid input with clear error messages
 - UI shows meaningful error states (validation, invalid transition, not found)
 - README with local setup instructions
 - No secrets committed to the repository
 - Integration tests prove state-machine rules
+
+---
+
+## Suggested next step
+
+After pasting, add a **Decisions** table with your chosen answers to the 14 ambiguities (especially #4, #5, #7, #11). Prompt 2 in [ai-prompts/planning.md](ai-practical-assessment/ai-prompts/planning.md) can then turn this into acceptance criteria.
