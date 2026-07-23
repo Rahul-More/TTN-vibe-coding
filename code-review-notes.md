@@ -34,6 +34,35 @@
 
 **Note:** `.env.example` documenting `Password=password` as a placeholder is fine. The problem is the same string in tracked `appsettings*.json`.
 
+## AI-Assisted Review Summary — Frontend (Prompt 2)
+
+**Prompt used:** `ai-prompts/code-review.md` → Prompt 2
+
+**Date:** 2026-07-23
+
+**Scope reviewed:** Frontend (`src/SupportTicket.Web`) against `ui-flow.md` and `acceptance-criteria.md`
+
+### Review checklist (Prompt 2)
+
+| # | Area | Verdict |
+|---|------|---------|
+| 1 | Status dropdown — only shows valid next states? | Pass — dropdown populated from `ticket.validNextStatuses` (server-computed); terminal states disable control with helper text |
+| 2 | Error handling — invalid transitions shown clearly to user? | Pass — server message surfaced via MUI `Alert` (`statusError`); bypass errors show API message |
+| 3 | Search and filter — wired correctly to API query params? | Pass — `getTickets` builds `search`/`status` `URLSearchParams`; search debounced 300ms |
+| 4 | Loading and error states on all pages? | Mostly pass — list page shows empty table under error banner (#F2) |
+| 5 | No hardcoded API URLs (use env variable)? | Pass — `import.meta.env.VITE_API_URL` with hard fail if unset; documented in `.env.example` |
+| 6 | Accessibility basics (labels, form errors)? | Mostly pass — search input missing accessible label (#F1) |
+
+### AI Findings
+
+| # | File | Finding | Severity | Suggested fix | Action |
+|---|------|---------|----------|---------------|--------|
+| F1 | `src/SupportTicket.Web/src/pages/TicketListPage.tsx` (lines 131–146) | Search `TextField` has only a `placeholder`, no `label` or `aria-label` — screen readers announce no field name. | Med | Add `label="Search"` or `aria-label="Search tickets"`. | Pending |
+| F2 | `src/SupportTicket.Web/src/pages/TicketListPage.tsx` (lines 178–202) | On load error, `tickets` is reset to `[]` and render falls through to table branch, showing empty "0 tickets" table under the error banner. | Low | Skip the table when `error` is set (render `null` in that branch). | Pending |
+| F3 | `src/SupportTicket.Web/src/pages/CreateTicketPage.tsx` (lines 214–244) | Priority `ToggleButtonGroup` has no group `aria-label` (minor a11y polish; individual buttons carry chip text). | Low | Add `aria-label="Priority"` to the group. | Pending |
+
+**Note:** API validation errors surface as a top-of-form banner rather than inline per-field (ui-flow Flow 2.5 mentions inline errors). Acceptable for Core since the API returns a single `{ error }` message — no change suggested.
+
 ## My Review Observations
 
 - _[Your own review notes beyond what AI found]_

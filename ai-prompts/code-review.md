@@ -72,11 +72,11 @@ Format findings as a table. Suggest only Core-scope fixes.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted fixes** | |
-| **Rejected suggestions** | |
-| **Why rejected** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Frontend review against `ui-flow.md` + `acceptance-criteria.md`. Status dropdown correctly driven by `validNextStatuses`; search/filter and env-based API URL solid; 3 findings logged in `code-review-notes.md` (highest: search input a11y label). No fixes applied. |
+| **Accepted fixes** | None yet — all 3 findings left **Pending** in `code-review-notes.md` for decision. |
+| **Rejected suggestions** | None yet. |
+| **Why rejected** | N/A — awaiting Accept/Reject on each Action row before Prompt 3. |
 
 ---
 
