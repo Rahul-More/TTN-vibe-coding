@@ -37,12 +37,12 @@ Do not implement API controllers yet.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Scaffolded `SupportTicket.Api` with EF Core entities (User, Ticket, Comment), Fluent API configurations, `AppDbContext`, PostgreSQL initial migration in `database/schema-or-migrations/`, JSON-only seed via `DbSeeder` reading `database/seed-data/seed-data.json`, env-based Postgres/SQLite provider switch, `.env.example`, and updated `database/setup-notes.md`. No API controllers. |
+| **Accepted** | Pending review |
+| **Changed** | Seed data JSON-only (no SQL, no HasData, no hardcoded C# rows); SQLite uses `EnsureCreated` instead of Postgres migrations |
+| **Rejected** | — |
+| **Why** | JSON is the single seed source per user preference; Postgres migrations are Npgsql-specific so SQLite fallback uses model-based schema creation |
 
 ---
 

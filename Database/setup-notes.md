@@ -2,31 +2,37 @@
 
 ## Database Choice
 
-**Primary:** PostgreSQL  
-**Local dev fallback:** SQLite (optional — document if used)
+**PostgreSQL** — required for local development and runtime.
 
 ## Prerequisites
 
-- PostgreSQL 14+ installed and running
 - .NET 8 SDK
 - EF Core CLI: `dotnet tool install --global dotnet-ef`
+- PostgreSQL 14+
 
 ## Environment Variables
 
-Create a `.env` file (do **not** commit) based on `.env.example`:
+Copy [`.env.example`](../.env.example) to `.env` at the repo root (do **not** commit `.env`):
 
 ```env
-# .env.example — copy to .env and fill in values
-
-# PostgreSQL
-ConnectionStrings__DefaultConnection=Host=localhost;Port=5432;Database=ticketdb;Username=postgres;Password=YOUR_PASSWORD
-
-# API
+ConnectionStrings__DefaultConnection=Host=localhost;Port=5432;Database=ticketdb;Username=postgres;Password=password
 ASPNETCORE_ENVIRONMENT=Development
 ASPNETCORE_URLS=http://localhost:5000
-
-# Frontend
 VITE_API_URL=http://localhost:5000/api
+```
+
+### PowerShell (session)
+
+```powershell
+$env:ConnectionStrings__DefaultConnection = "Host=localhost;Port=5432;Database=ticketdb;Username=postgres;Password=password"
+$env:ASPNETCORE_ENVIRONMENT = "Development"
+```
+
+### Bash
+
+```bash
+export ConnectionStrings__DefaultConnection="Host=localhost;Port=5432;Database=ticketdb;Username=postgres;Password=password"
+export ASPNETCORE_ENVIRONMENT=Development
 ```
 
 ## Setup Steps
@@ -40,29 +46,35 @@ CREATE DATABASE ticketdb;
 ### 2. Apply migrations
 
 ```bash
-cd src/[YourApiProject]
-dotnet ef database update
+dotnet ef database update --project src/SupportTicket.Api --startup-project src/SupportTicket.Api
 ```
 
-Migrations are in `database/schema-or-migrations/` (or generated under the API project — copy/symlink as needed).
+Migrations live in [`database/schema-or-migrations/`](schema-or-migrations/) and are compiled into `SupportTicket.Api` via the project file.
 
 ### 3. Seed data
 
-Seed runs automatically on startup, or run manually:
+Seed runs automatically on API startup from [`database/seed-data/seed-data.json`](seed-data/seed-data.json).
+
+- **Mechanism:** `DbSeeder` reads JSON only (no SQL scripts, no `HasData` in migrations)
+- **Idempotent:** Skips if users already exist
+- **Content:** 5 users, 3 sample tickets, 4 comments
+
+To re-seed from scratch, drop/recreate the database and restart the API.
+
+### 4. Run the API
 
 ```bash
-# If you have a seed command/script, document it here
-dotnet run --project src/[YourApiProject] -- seed
+cd src/SupportTicket.Api
+dotnet run
 ```
 
-Seed data files: `database/seed-data/`
+On first run: migrations and JSON seed execute automatically.
 
-### 4. Verify
+### 5. Verify
 
 ```bash
-# Connect to DB and check tables
-psql -d ticketdb -c "SELECT * FROM \"Users\";"
-psql -d ticketdb -c "SELECT * FROM \"Tickets\";"
+psql -d ticketdb -c 'SELECT "Id", "Name", "Email" FROM "Users";'
+psql -d ticketdb -c 'SELECT "Id", "Title", "Status" FROM "Tickets";'
 ```
 
 ## Schema Overview
@@ -73,22 +85,24 @@ psql -d ticketdb -c "SELECT * FROM \"Tickets\";"
 | Tickets | Support tickets |
 | Comments | Ticket comments |
 
-See `data-model.md` for full column definitions.
+See [`data-model.md`](../data-model.md) for full column definitions, indexes, and FK rules.
 
 ## Troubleshooting
 
 | Issue | Fix |
 |-------|-----|
 | Connection refused | Check PostgreSQL is running on port 5432 |
-| Migration pending | Run `dotnet ef database update` |
-| FK constraint on seed | Seed users before tickets |
-| Password auth failed | Verify `.env` connection string |
+| Password auth failed | Verify connection string in `.env` or environment |
+| Migration pending | Run `dotnet ef database update --project src/SupportTicket.Api` |
+| FK constraint on seed | Ensure `seed-data.json` lists users before tickets/comments |
+| Seed file not found | Run API from repo with `src/SupportTicket.Api` as content root; JSON is at `database/seed-data/seed-data.json` |
 
 ## Files in This Folder
 
 ```
 database/
-├── schema-or-migrations/   # EF Core migration files (generated during implementation)
-├── seed-data/              # SQL or JSON seed scripts
+├── schema-or-migrations/   # EF Core migration files (InitialCreate)
+├── seed-data/
+│   └── seed-data.json      # Single source of truth for seed data
 └── setup-notes.md          # This file
 ```
