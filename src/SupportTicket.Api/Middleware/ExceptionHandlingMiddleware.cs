@@ -30,7 +30,10 @@ public class ExceptionHandlingMiddleware
             context.Response.ContentType = "application/json";
 
             var response = new ErrorResponse("An unexpected error occurred");
-            await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            await context.Response.WriteAsync(JsonSerializer.Serialize(response, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            }));
         }
     }
 }

@@ -214,6 +214,7 @@ export function CreateTicketPage() {
               <ToggleButtonGroup
                 exclusive
                 value={priority}
+                aria-label="Priority"
                 onChange={(_, value: TicketPriority | null) => {
                   if (value) {
                     setPriority(value);
@@ -226,6 +227,7 @@ export function CreateTicketPage() {
                   <ToggleButton
                     key={p}
                     value={p}
+                    aria-label={`${p} priority`}
                     sx={{
                       px: 2.5,
                       py: 1,

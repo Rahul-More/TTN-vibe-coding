@@ -56,7 +56,11 @@ public class TicketService : ITicketService
 
     public async Task<ServiceResult<TicketDetailResponse>> CreateAsync(CreateTicketRequest request)
     {
-        EnumParsing.TryParsePriority(request.Priority, out var priority);
+        if (!EnumParsing.TryParsePriority(request.Priority, out var priority))
+        {
+            return ServiceResult<TicketDetailResponse>.Fail(
+                EnumParsing.InvalidPriorityMessage(request.Priority));
+        }
 
         var now = DateTime.UtcNow;
         var ticket = new Ticket
@@ -85,7 +89,11 @@ public class TicketService : ITicketService
             return ServiceResult<TicketDetailResponse>.NotFound("Ticket not found");
         }
 
-        EnumParsing.TryParsePriority(request.Priority, out var priority);
+        if (!EnumParsing.TryParsePriority(request.Priority, out var priority))
+        {
+            return ServiceResult<TicketDetailResponse>.Fail(
+                EnumParsing.InvalidPriorityMessage(request.Priority));
+        }
 
         ticket.Title = request.Title.Trim();
         ticket.Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim();
@@ -130,46 +138,40 @@ public class TicketService : ITicketService
 
     private TicketDetailResponse MapToDetail(Ticket ticket)
     {
-        var detail = new TicketDetailResponse
+        var detail = new TicketDetailResponse();
+        MapListFields(ticket, detail);
+        detail.ValidNextStatuses = _statusTransitionService.GetValidNextStatuses(ticket.Status).ToList();
+        detail.Comments = ticket.Comments.Select(c => new CommentResponse
         {
-            Id = ticket.Id,
-            Title = ticket.Title,
-            Description = ticket.Description,
-            Priority = ticket.Priority.ToString(),
-            Status = ticket.Status.ToString(),
-            AssignedTo = ticket.AssignedToId,
-            AssignedToName = ticket.AssignedTo?.Name,
-            CreatedBy = ticket.CreatedById,
-            CreatedByName = ticket.CreatedBy.Name,
-            CreatedAt = ticket.CreatedAt,
-            UpdatedAt = ticket.UpdatedAt,
-            ValidNextStatuses = _statusTransitionService.GetValidNextStatuses(ticket.Status).ToList(),
-            Comments = ticket.Comments.Select(c => new CommentResponse
-            {
-                Id = c.Id,
-                Message = c.Message,
-                CreatedBy = c.CreatedById,
-                CreatedByName = c.CreatedBy.Name,
-                CreatedAt = c.CreatedAt
-            }).ToList()
-        };
+            Id = c.Id,
+            Message = c.Message,
+            CreatedBy = c.CreatedById,
+            CreatedByName = c.CreatedBy.Name,
+            CreatedAt = c.CreatedAt
+        }).ToList();
 
         return detail;
     }
 
-    private static TicketListItemResponse MapToListItem(Ticket ticket) =>
-        new()
-        {
-            Id = ticket.Id,
-            Title = ticket.Title,
-            Description = ticket.Description,
-            Priority = ticket.Priority.ToString(),
-            Status = ticket.Status.ToString(),
-            AssignedTo = ticket.AssignedToId,
-            AssignedToName = ticket.AssignedTo?.Name,
-            CreatedBy = ticket.CreatedById,
-            CreatedByName = ticket.CreatedBy.Name,
-            CreatedAt = ticket.CreatedAt,
-            UpdatedAt = ticket.UpdatedAt
-        };
+    private static TicketListItemResponse MapToListItem(Ticket ticket)
+    {
+        var item = new TicketListItemResponse();
+        MapListFields(ticket, item);
+        return item;
+    }
+
+    private static void MapListFields(Ticket ticket, TicketListItemResponse response)
+    {
+        response.Id = ticket.Id;
+        response.Title = ticket.Title;
+        response.Description = ticket.Description;
+        response.Priority = ticket.Priority.ToString();
+        response.Status = ticket.Status.ToString();
+        response.AssignedTo = ticket.AssignedToId;
+        response.AssignedToName = ticket.AssignedTo?.Name;
+        response.CreatedBy = ticket.CreatedById;
+        response.CreatedByName = ticket.CreatedBy.Name;
+        response.CreatedAt = ticket.CreatedAt;
+        response.UpdatedAt = ticket.UpdatedAt;
+    }
 }

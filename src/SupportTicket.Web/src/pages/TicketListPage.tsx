@@ -129,6 +129,7 @@ export function TicketListPage() {
         </Box>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
           <TextField
+            label="Search"
             placeholder="Search by title or description…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -179,7 +180,7 @@ export function TicketListPage() {
 
       {loading ? (
         <LoadingState />
-      ) : tickets.length === 0 && !error ? (
+      ) : error ? null : tickets.length === 0 ? (
         <EmptyState
           title="No tickets found"
           description={

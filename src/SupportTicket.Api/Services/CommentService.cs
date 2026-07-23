@@ -41,13 +41,17 @@ public class CommentService : ICommentService
         await _commentRepository.AddAsync(comment);
 
         var createdBy = await _userRepository.GetByIdAsync(request.CreatedBy);
+        if (createdBy is null)
+        {
+            return ServiceResult<CommentResponse>.Fail("Created by user not found");
+        }
 
         return ServiceResult<CommentResponse>.Ok(new CommentResponse
         {
             Id = comment.Id,
             Message = comment.Message,
             CreatedBy = comment.CreatedById,
-            CreatedByName = createdBy!.Name,
+            CreatedByName = createdBy.Name,
             CreatedAt = comment.CreatedAt
         });
     }

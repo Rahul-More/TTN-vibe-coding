@@ -105,7 +105,7 @@ I will log changes in review-fixes.md.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **Fixes applied** | |
-| **Files changed** | |
-| **Tests still pass** | Yes / No |
+| **Date** | 2026-07-23 |
+| **Fixes applied** | Backend #1–#7: removed committed connection strings; `AppDbContextFactory` requires env var; `Enum.IsDefined` in enum parsing; camelCase 500 JSON; Swagger removed; defensive guards in `TicketService`/`CommentService`; shared `MapListFields` helper. Frontend F1–F3: search `label`, skip table on load error, Priority `aria-label`s. |
+| **Files changed** | `appsettings.json`, `appsettings.Development.json`, `AppDbContextFactory.cs`, `EnumParsing.cs`, `ExceptionHandlingMiddleware.cs`, `Program.cs`, `SupportTicket.Api.csproj`, `TicketService.cs`, `CommentService.cs`, `TicketListPage.tsx`, `CreateTicketPage.tsx` |
+| **Tests still pass** | Yes — 78/78 (`dotnet test tests/SupportTicket.Api.Tests`) |

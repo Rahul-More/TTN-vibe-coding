@@ -11,7 +11,9 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
         var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-            ?? "Host=localhost;Port=5432;Database=ticketdb;Username=postgres;Password=password";
+            ?? throw new InvalidOperationException(
+                "ConnectionStrings__DefaultConnection environment variable is not set. " +
+                "Set it before running EF design-time tools (see .env.example).");
 
         optionsBuilder.UseNpgsql(connectionString);
 
