@@ -155,9 +155,9 @@ Output for test-strategy.md. No test code yet.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Full test-strategy.md: complete 5×5 transition matrix (5 valid, 20 invalid), WebApplicationFactory + PostgreSQL test DB setup, status-endpoint isolation tests, additional validation/404/smoke tests, edge-case cross-ref, Core vs Stretch boundaries; resolved same-state → 400 (not idempotent) |
+| **Accepted** | Full transition matrix; mandatory vs recommended test priorities; infrastructure section; alignment with api-contract error shapes |
+| **Changed** | Expanded from skeleton; clarified invalid-transition testing uses parameterized approach for full matrix while Core minimum is 5 valid + 4 invalid |
+| **Rejected** | — |
+| **Why** | Matches locked state machine in requirements-analysis.md and api-contract.md; satisfies AC-11 and Prompt 4 deliverables |
