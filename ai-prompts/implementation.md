@@ -37,12 +37,12 @@ Do not implement API controllers yet.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Scaffolded `SupportTicket.Api` with EF Core entities (User, Ticket, Comment), Fluent API configurations, `AppDbContext`, PostgreSQL initial migration in `database/schema-or-migrations/`, JSON-only seed via `DbSeeder` reading `database/seed-data/seed-data.json`, env-based Postgres/SQLite provider switch, `.env.example`, and updated `database/setup-notes.md`. No API controllers. |
+| **Accepted** | Pending review |
+| **Changed** | Seed data JSON-only (no SQL, no HasData, no hardcoded C# rows); SQLite uses `EnsureCreated` instead of Postgres migrations |
+| **Rejected** | — |
+| **Why** | JSON is the single seed source per user preference; Postgres migrations are Npgsql-specific so SQLite fallback uses model-based schema creation |
 
 ---
 
@@ -80,12 +80,12 @@ Do not implement controllers yet. Show me the service and any enums.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Created `IStatusTransitionService` / `StatusTransitionService`, `ServiceResult`, xUnit matrix tests (25 transition pairs); controller-ready `Program.cs` (`AddControllers`/`MapControllers`); no endpoint controllers |
+| **Accepted** | Pending review |
+| **Changed** | Used `ServiceResult` instead of exceptions; `GetValidNextStatuses` returns `IEnumerable<string>`; scoped service registration; controllers+services pattern (not minimal API) |
+| **Rejected** | Minimal API / endpoint routes in `Program.cs` |
+| **Why** | Result pattern for invalid transitions; controller+service architecture per design-notes; `TicketService` maps `ServiceResult` → 400 JSON in Prompt 3 |
 
 ---
 
@@ -125,12 +125,12 @@ Implement controllers, services, DTOs, and wire up EF Core. No frontend yet.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Implemented 7 REST endpoints (`UsersController`, `TicketsController`), request/response DTOs, FluentValidation validators (incl. `status` rejection via `JsonExtensionData`), 3 EF Core repositories, `UserService`/`TicketService`/`CommentService`, `ServiceResult<T>`, `ExceptionHandlingMiddleware`, flat `{ "error" }` validation responses, CORS for Vite (`localhost:5173`), Swagger UI + OpenAPI 3 at `/swagger`, port aligned to 5000 |
+| **Accepted** | Pending review |
+| **Changed** | Swagger/OpenAPI added per user request (was Stretch in original contract); used `Swashbuckle.AspNetCore` 10.x with target-typed `OpenApiInfo`; integration tests deferred to testing phase |
+| **Rejected** | — |
+| **Why** | Controller+service+repository pattern per design-notes; `TicketService.ChangeStatusAsync` delegates to existing `StatusTransitionService`; manual DTO mapping (no AutoMapper) |
 
 ---
 
@@ -166,12 +166,12 @@ Show meaningful loading and error states. Do not implement detail page yet.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Scaffolded `src/SupportTicket.Web` (Vite + React 19 + TypeScript + MUI + react-router-dom). Implemented fetch-based API client (`VITE_API_URL`), types matching `api-contract.md`, Ticket List page (MUI table, 300ms debounced search, status filter, loading/error/empty states), Create Ticket form (user dropdowns, `localStorage` for `createdBy`, API validation errors), detail-route placeholder for row navigation, `.env.example` |
+| **Accepted** | Pending review |
+| **Changed** | MUI instead of plain CSS (user preference); redirect to list on create success (detail page deferred to Prompt 5); `TicketDetailPlaceholder` stub at `/tickets/:id` |
+| **Rejected** | — |
+| **Why** | MUI per user styling choice; list redirect avoids half-built detail flow; placeholder satisfies row-click navigation without Prompt 5 scope |
 
 ---
 
@@ -204,9 +204,9 @@ Wire to the existing backend API.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Extended `types/api.ts` and `ticketsApi.ts` with `TicketDetail`, `Comment`, and four detail endpoints (`getTicket`, `updateTicket`, `changeTicketStatus`, `addComment`). Added `status` to `ApiRequestError` for 404 detection. Built `TicketDetailPage` with overview metadata, PUT edit form (dirty tracking), API-driven status dropdown via `validNextStatuses` with warning `Alert` on transition errors, comment thread + add form, and dedicated 404/invalid-ID states. Replaced `TicketDetailPlaceholder` in routing. |
+| **Accepted** | Pending review |
+| **Changed** | Status transition errors use `Alert severity="warning"` (not `ErrorBanner`); comments appended locally after POST (no refetch); `FormSection` duplicated inline (not extracted from create page) |
+| **Rejected** | — |
+| **Why** | Warning alert distinguishes transition failures from validation errors; local comment append avoids full-page reload; inline `FormSection` keeps diff minimal |

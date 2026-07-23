@@ -1,0 +1,99 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin User",
+      "email": "admin@example.com",
+      "role": "Admin"
+    },
+    {
+      "id": 2,
+      "name": "Alice Agent",
+      "email": "alice.agent@example.com",
+      "role": "Agent"
+    },
+    {
+      "id": 3,
+      "name": "Bob Agent",
+      "email": "bob.agent@example.com",
+      "role": "Agent"
+    },
+    {
+      "id": 4,
+      "name": "Carol Agent",
+      "email": "carol.agent@example.com",
+      "role": "Agent"
+    },
+    {
+      "id": 5,
+      "name": "Dave Agent",
+      "email": "dave.agent@example.com",
+      "role": "Agent"
+    }
+  ],
+  "tickets": [
+    {
+      "id": 1,
+      "title": "VPN not connecting",
+      "description": "Cannot connect to corporate VPN from home network.",
+      "priority": "High",
+      "status": "Open",
+      "assignedToId": 2,
+      "createdById": 1,
+      "createdAt": "2026-01-15T10:00:00Z",
+      "updatedAt": "2026-01-15T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "title": "Password reset request",
+      "description": "User locked out after multiple failed login attempts.",
+      "priority": "Medium",
+      "status": "InProgress",
+      "assignedToId": 3,
+      "createdById": 2,
+      "createdAt": "2026-01-16T09:30:00Z",
+      "updatedAt": "2026-01-16T14:00:00Z"
+    },
+    {
+      "id": 3,
+      "title": "Printer offline on 3rd floor",
+      "description": "Shared printer shows offline in Windows print queue.",
+      "priority": "Low",
+      "status": "Resolved",
+      "assignedToId": 4,
+      "createdById": 1,
+      "createdAt": "2026-01-10T08:00:00Z",
+      "updatedAt": "2026-01-12T16:45:00Z"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "ticketId": 1,
+      "message": "Reproduced on Windows 11. Error code 809.",
+      "createdById": 2,
+      "createdAt": "2026-01-15T11:00:00Z"
+    },
+    {
+      "id": 2,
+      "ticketId": 1,
+      "message": "Checked firewall rules — port 443 is open.",
+      "createdById": 3,
+      "createdAt": "2026-01-15T13:30:00Z"
+    },
+    {
+      "id": 3,
+      "ticketId": 2,
+      "message": "Reset link sent to user email.",
+      "createdById": 3,
+      "createdAt": "2026-01-16T10:00:00Z"
+    },
+    {
+      "id": 4,
+      "ticketId": 3,
+      "message": "Restarted print spooler service. Printer back online.",
+      "createdById": 4,
+      "createdAt": "2026-01-12T16:45:00Z"
+    }
+  ]
+}
