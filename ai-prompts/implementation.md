@@ -80,12 +80,12 @@ Do not implement controllers yet. Show me the service and any enums.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Created `IStatusTransitionService` / `StatusTransitionService`, `ServiceResult`, xUnit matrix tests (25 transition pairs); controller-ready `Program.cs` (`AddControllers`/`MapControllers`); no endpoint controllers |
+| **Accepted** | Pending review |
+| **Changed** | Used `ServiceResult` instead of exceptions; `GetValidNextStatuses` returns `IEnumerable<string>`; scoped service registration; controllers+services pattern (not minimal API) |
+| **Rejected** | Minimal API / endpoint routes in `Program.cs` |
+| **Why** | Result pattern for invalid transitions; controller+service architecture per design-notes; `TicketService` maps `ServiceResult` → 400 JSON in Prompt 3 |
 
 ---
 
