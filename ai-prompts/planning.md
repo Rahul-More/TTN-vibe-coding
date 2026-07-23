@@ -67,12 +67,12 @@ Do not implement code.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Produced a 5-section acceptance criteria checklist mapped to AC-1–AC-11 from requirements-analysis.md: Core features (+ supporting scope), Validation rules, Error handling, Testing (state machine integration), and Documentation. Folded prior State Machine and Users sections into the new structure; added PUT full-replace semantics, timestamp behavior, negative scope, and expanded edge-case/error-shape detail. |
+| **Accepted** | Full checklist structure; AC-1–AC-11 mapping; validation/error/testing/documentation sections; supporting Core scope items; edge-case error handling |
+| **Changed** | Kept "representative minimum" for invalid transition tests (not all 20 cases as separate checkboxes) to balance thoroughness with maintainability |
+| **Rejected** | — |
+| **Why** | Checklist aligns with locked decisions in requirements-analysis.md and api-contract.md; representative invalid-transition tests match test-strategy.md while AC-6 still requires all invalid transitions to return 400 at runtime |
 
 ---
 
@@ -106,9 +106,9 @@ Output markdown for implementation-plan.md. No code yet.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Wrote full implementation-plan.md: 5 phases (planning, design, backend, frontend, testing/review), 30+ ordered tasks with dependencies, 7-day milestones (M1–M5), AI chat session map aligned to PROMPT-ORDER.md, state-machine-focused risks/mitigations, Core vs Stretch boundary, dependency mermaid diagram, and AC traceability. |
+| **Accepted** | Phase structure; task IDs with depends-on; Day 1–7 milestones; separate-chat rule per prompt; state machine risk table; Core-only scope |
+| **Changed** | Grouped B2.2–B2.4 and F3.2–F3.4 into single chat sessions where prompts already combine them; added manual checkpoints between phases |
+| **Rejected** | — |
+| **Why** | Plan maps directly to acceptance-criteria.md and existing ai-prompts/ files so each day has clear exit criteria before moving on |
