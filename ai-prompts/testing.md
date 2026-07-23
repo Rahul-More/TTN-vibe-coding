@@ -46,13 +46,13 @@ Place tests in tests/ folder. Ensure dotnet test runs successfully.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
-| **Test run result** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Added WebApplicationFactory integration tests for 5 valid + 5 invalid status transitions against PostgreSQL `ticketdb_test`. Includes factory, helpers, and `[Theory]` tests under `tests/SupportTicket.Api.Tests/Integration/`. |
+| **Accepted** | CustomWebApplicationFactory with dedicated Postgres test DB; StatusTransitionIntegrationTests covering all 10 required transitions; PATCH assertions for 200/`TicketDetailResponse` and 400/`INVALID_TRANSITION`; GET persistence checks. |
+| **Changed** | Seeded tickets via EF DbContext instead of POST (async FluentValidation auto-validation crashes POST); reset Tickets identity sequence after seed; used `[Collection]` to disable parallel integration tests. |
+| **Rejected** | EF InMemory (strategy prefers real Postgres); Testcontainers (no Docker compose in repo). |
+| **Why** | Matches `test-strategy.md` AC for state-machine HTTP proof; POST seed blocked by existing FluentValidation async-rule issue in API. |
+| **Test run result** | `dotnet test` — 65 passed, 0 failed (55 unit + 10 integration). |
 
 ---
 
@@ -84,13 +84,13 @@ Update test-results.md with a summary table after running.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
-| **Test run result** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Replaced sync FluentValidation auto-validation with `FluentValidationAsyncActionFilter` so async `MustAsync` rules work on POST; added 5 validation/404 integration tests and HTTP helpers in `ValidationErrorIntegrationTests`. |
+| **Accepted** | Async action filter for FluentValidation; `ValidationErrorIntegrationTests` for empty title, invalid createdBy, GET 404, comment 404, empty message; extended `TicketApiHelpers` with POST/GET raw helpers. |
+| **Changed** | Removed `AddFluentValidationAutoValidation()` from `Program.cs`; added `Filters/FluentValidationAsyncActionFilter.cs`; updated `test-results.md` with all 70 passing tests. |
+| **Rejected** | EF InMemory (strategy prefers Postgres); new NuGet packages (filter uses existing FluentValidation DI). |
+| **Why** | POST endpoints require async validator support for user-existence checks; matches `test-strategy.md` §5.1/§5.2 and `api-contract.md` error envelopes. |
+| **Test run result** | `dotnet test` — 70 passed, 0 failed (55 unit + 15 integration). |
 
 ---
 
@@ -119,9 +119,10 @@ Do not add Stretch tests unless I explicitly ask.
 
 | Field | Your notes |
 |-------|------------|
-| **Date** | |
-| **AI response summary** | |
-| **Accepted** | |
-| **Changed** | |
-| **Rejected** | |
-| **Why** | |
+| **Date** | 2026-07-23 |
+| **AI response summary** | Mapped all 11 Core ACs to automated tests or manual steps; added 8 Core integration tests (status isolation, invalid priority/status query, search/filter, same-state transition); regenerated `test-results.md` AC coverage table. |
+| **Accepted** | AC coverage mapping; `StatusIsolationIntegrationTests` (3); `SearchFilterIntegrationTests` (2); extended `ValidationErrorIntegrationTests` (+2) and `StatusTransitionIntegrationTests` (+1 same-state); `TicketApiHelpers` PUT/list helpers; AC summary table in `test-results.md`. |
+| **Changed** | `test-results.md` — added Acceptance Criteria Coverage section and new test result tables; total 78 tests (55 unit + 23 integration). |
+| **Rejected** | Stretch tests (E2E, React component, concurrency); max-length/assignedTo integration tests (not required for Core minimum). |
+| **Why** | Closes Core gaps for AC-1/4/6/7/9 status isolation and search/filter; UI-only ACs remain manual per `test-strategy.md` §8. |
+| **Test run result** | `dotnet test` — 78 passed, 0 failed (55 unit + 23 integration). |
